@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     | Whether or not to automatically register the My Profile page. Set this to false to extend and create your own page.
     */
-    "enable_profile_page" => true,
+    "enable_profile_page" => false,
     /*
     | Whether or not to automatically link the My Profile page in the user menu of Filament. NOTE: if enable_profile_page => false then this value is ignored and you'll need to register the item in your service provider manually.
     */
@@ -15,7 +15,7 @@ return [
     /*
     | Whether or not to automatically display the My Profile page in the navigation of Filament. NOTE: if enable_profile_page => false then this value is ignored.
     */
-    "show_profile_page_in_navbar" => false,
+    "show_profile_page_in_navbar" => true,
     /*
     | Customize the icon profile page icon in the navbar. Does not apply to the user menu.
     */
@@ -49,7 +49,7 @@ return [
     |--------------------------------------------------------------------------
     | The column to use for login/username authentication. NOTE: this may change to just 'login_field' in a later release.
     */
-    "fallback_login_field" => "email",
+    "fallback_login_field" => "username",
     /*
     |--------------------------------------------------------------------------
     | Set a route name prefix for all of Breezy's auth routes. Ex. set filament. to prefix all route names, filament.register. WARNING: if you use a custom route prefix, you'll need to override the default auth routes used throughout your application. This is outside of Breezy's scope and will be up to the dev to maintain. Use at your own risk. See example: https://laravel.com/docs/9.x/passwords#password-customization
@@ -74,7 +74,7 @@ return [
     |--------------------------------------------------------------------------
     | Enable or disable registration.
     */
-    "enable_registration" => true,
+    "enable_registration" => false,
     /*
     |--------------------------------------------------------------------------
     | Path to registration Livewire component.
@@ -99,7 +99,7 @@ return [
     |--------------------------------------------------------------------------
     | Path to Profile page component.
     */
-    "profile_page_component_path" => \JeffGreco13\FilamentBreezy\Pages\MyProfile::class,
+    "profile_page_component_path" => \App\Filament\Pages\MyProfile::class,
     /*
     |--------------------------------------------------------------------------
     | Where to redirect the user after registration.

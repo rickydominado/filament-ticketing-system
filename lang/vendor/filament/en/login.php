@@ -28,6 +28,9 @@ return [
             'label' => 'Remember me',
         ],
 
+        'username' => [
+            'label' => 'Username',
+        ],
     ],
 
     'messages' => [

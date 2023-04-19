@@ -4,16 +4,19 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Traits\HasProfilePhoto;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasProfilePhoto;
 
     /**
      * The attributes that are mass assignable.
@@ -51,6 +54,10 @@ class User extends Authenticatable implements FilamentUser
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
     public function canAccessFilament(): bool
     {
         return $this->hasAnyRole([
@@ -58,5 +65,10 @@ class User extends Authenticatable implements FilamentUser
             'admin',
             'agent',
         ]);
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->profile_photo_url;
     }
 }
