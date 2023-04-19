@@ -21,28 +21,27 @@ class MyProfile extends BaseProfile
                 ->rules(['nullable', 'mimes:jpg,jpeg,png', 'max:1024']),
 
             \Filament\Forms\Components\TextInput::make('firstname')
-                // ->label(__('filament-breezy::default.fields.name')),
-                ->label('Firstname'),
+                ->label(__('filament::pages/my-profile.fields.firstname.label')),
 
             \Filament\Forms\Components\TextInput::make('lastname')
-                ->label('Lastname'),
+                ->label(__('filament::pages/my-profile.fields.lastname.label')),
 
             \Filament\Forms\Components\TextInput::make('email')
                 ->required(fn (null|string $state): null|string => !filled($state))
                 ->email()
                 ->unique(config('filament-breezy.user_model'), ignorable: $this->user)
-                ->label('Email Address')
+                ->label(__('filament::pages/my-profile.fields.email.label'))
                 ->placeholder('Email Address'),
 
             \Filament\Forms\Components\TextInput::make('address')
                 ->required(fn (null|string $state): null|string => !filled($state))
-                ->label('Address')
+                ->label(__('filament::pages/my-profile.fields.address.label'))
                 ->placeholder('Address'),
 
             \Filament\Forms\Components\TextInput::make('mobile_number')
                 ->required(fn (null|string $state): null|string => !filled($state))
                 ->tel()
-                ->label('Mobile Number')
+                ->label(__('filament::pages/my-profile.fields.mobile-number.label'))
                 ->placeholder('+63(000)000-00-00')
                 ->mask(fn (\Filament\Forms\Components\TextInput\Mask $mask) => $mask->pattern('+{63}(000)000-00-00')),
         ];
