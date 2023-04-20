@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use JeffGreco13\FilamentBreezy\Pages\MyProfile as BaseProfile;
+use Livewire\TemporaryUploadedFile;
 
 class MyProfile extends BaseProfile
 {
@@ -14,6 +15,11 @@ class MyProfile extends BaseProfile
     {
         return [
             \Filament\Forms\Components\FileUpload::make('profile_photo_path')
+                ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                    $img_name = explode('.', $file->hashName());
+
+                    return (string) str($img_name[0] . '/' . $file->getClientOriginalName());
+                })
                 ->image()
                 ->avatar()
                 ->disk($this->user->profilePhotoDisk())
@@ -49,7 +55,13 @@ class MyProfile extends BaseProfile
 
     public function updateProfile()
     {
-        parent::updateProfile();
+        $updateProfileForm = $this->updateProfileForm->getState();
+        $updateProfilePhoto = array_shift($updateProfileForm);
+
+        $this->user->update($updateProfileForm);
+        $this->user->updateProfilePhoto($updateProfilePhoto);
+
+        $this->notify("success", __('filament-breezy::default.profile.personal_info.notify'));
 
         return redirect()->route('filament.pages.my-profile');
     }

@@ -25,8 +25,8 @@ trait HasProfilePhoto
                 'profile_photo_path' => $photo,
             ])->save();
 
-            if ($previous && !$photo) {
-                Storage::disk($this->profilePhotoDisk())->delete($previous);
+            if ($previous !== $photo) {
+                $previous ? Storage::disk($this->profilePhotoDisk())->deleteDirectory($this->previous_profile_photo_path($previous)) : null;
             }
         });
     }
@@ -48,5 +48,14 @@ trait HasProfilePhoto
     public function profilePhotoDirectory(): string
     {
         return config('your-config.profile_photo_directory', 'profile-photos');
+    }
+
+    private function previous_profile_photo_path($previous): string
+    {
+        $temp = explode('/', $previous);
+
+        array_pop($temp);
+
+        return implode('/', $temp);
     }
 }
