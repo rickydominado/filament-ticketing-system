@@ -22,6 +22,7 @@ return new class extends Migration
                 $table->string('mobile_number');
                 $table->string('profile_photo_path')->nullable();
             });
+            $table->softDeletes()->after('updated_at');
         });
     }
 
@@ -40,6 +41,7 @@ return new class extends Migration
                 'mobile_number',
                 'profile_photo_path',
             ]);
+            $table->dropSoftDeletes();
         });
     }
 };

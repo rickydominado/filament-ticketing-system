@@ -65,4 +65,9 @@ class MyProfile extends BaseProfile
 
         return redirect()->route('filament.pages.my-profile');
     }
+
+    protected static function getNavigationGroup(): ?string
+    {
+        return null;
+    }
 }
