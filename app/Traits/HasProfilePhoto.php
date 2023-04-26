@@ -42,7 +42,7 @@ trait HasProfilePhoto
 
     public function profilePhotoDisk(): string
     {
-        return isset($_ENV['VAPOR_ARTIFACT_NAME']) ? 's3' : config('your-config.profile_photo_disk', 'media');
+        return isset($_ENV['VAPOR_ARTIFACT_NAME']) ? 's3' : config('your-config.profile_photo_disk', 'public');
     }
 
     public function profilePhotoDirectory(): string

@@ -20,6 +20,7 @@ class MyProfile extends BaseProfile
 
                     return (string) str($img_name[0] . '/' . $file->getClientOriginalName());
                 })
+                ->placeholder('Tap to Select a Profile Photo')
                 ->image()
                 ->avatar()
                 ->disk($this->user->profilePhotoDisk())

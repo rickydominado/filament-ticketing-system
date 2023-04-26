@@ -8,8 +8,8 @@ use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -26,6 +26,7 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -195,7 +196,7 @@ class UserResource extends Resource
                     ]),
 
                     Stack::make([
-                        Tables\Columns\TextColumn::make('created_at')
+                        TextColumn::make('created_at')
                             ->label('Created_at')
                             ->dateTime('d-M-Y')
                             ->sortable()
@@ -207,11 +208,11 @@ class UserResource extends Resource
                                 return true;
                             }),
 
-                        Tables\Columns\TextColumn::make('deleted_at')
+                        TextColumn::make('deleted_at')
                             ->label('Deleted_at')
                             ->dateTime('d-M-Y')
                             ->sortable()
-                            ->color('warning')
+                            ->color('warning'),
                     ])->grow(false),
                 ])
             ])
@@ -224,10 +225,10 @@ class UserResource extends Resource
 
                 Filter::make('created_at')
                     ->form([
-                        Forms\Components\DatePicker::make('created_from')
+                        DatePicker::make('created_from')
                             ->placeholder('MM / DD / YYYY')
                             ->closeOnDateSelection(),
-                        Forms\Components\DatePicker::make('created_until')
+                        DatePicker::make('created_until')
                             ->placeholder('MM / DD / YYYY')
                             ->closeOnDateSelection(),
                     ])
@@ -256,7 +257,7 @@ class UserResource extends Resource
                         return $indicators;
                     }),
 
-                Tables\Filters\TrashedFilter::make()
+                TrashedFilter::make()
                     ->visible(auth()->user()->hasRole('super-admin')),
             ])
             ->actions([
