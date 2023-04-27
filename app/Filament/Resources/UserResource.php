@@ -37,7 +37,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'User';
 
     public static function form(Form $form): Form
     {
@@ -212,6 +214,13 @@ class UserResource extends Resource
                             ->label('Deleted_at')
                             ->dateTime('d-M-Y')
                             ->sortable()
+                            ->visible(function (?Model $record): bool {
+                                if ($record && $record->deleted_at) {
+                                    return true;
+                                };
+
+                                return false;
+                            })
                             ->color('warning'),
                     ])->grow(false),
                 ])

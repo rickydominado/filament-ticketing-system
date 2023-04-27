@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained();
             $table->boolean('status')->nullable()->default(Status::Open->value);
             $table->boolean('severity')->nullable()->default(Severity::Low->value);
+            $table->unsignedBigInteger('assigned_to_user_id')->nullable();
+            $table->foreign('assigned_to_user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

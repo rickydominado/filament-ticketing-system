@@ -34,7 +34,9 @@ class InquiryResource extends Resource
 {
     protected static ?string $model = Inquiry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-ticket';
+
+    protected static ?string $navigationGroup = 'Inquiry';
 
     public static function form(Form $form): Form
     {
@@ -201,22 +203,32 @@ class InquiryResource extends Resource
                             ->label('Deleted_at')
                             ->dateTime('d-M-Y')
                             ->sortable()
+                            ->visible(function (?Model $record): bool {
+                                if ($record && $record->deleted_at) {
+                                    return true;
+                                };
+
+                                return false;
+                            })
                             ->color('warning'),
                     ])->grow(false),
                 ]),
             ])
             ->defaultSort('created_at')
             ->filters([
-                SelectFilter::make('category')->relationship('category', 'name')
-                    ->indicator('Category'),
-
                 SelectFilter::make('status')
                     ->options(\App\Enums\Inquiry\Status::statuses())
                     ->indicator('Status'),
 
+                SelectFilter::make('category')->relationship('category', 'name')
+                    ->indicator('Category'),
+
                 SelectFilter::make('severity')
                     ->options(\App\Enums\Inquiry\Severity::severities())
                     ->indicator('Severity'),
+
+                TrashedFilter::make()
+                    ->visible(auth()->user()->hasRole('super-admin')),
 
                 Filter::make('created_at')
                     ->form([
@@ -251,10 +263,6 @@ class InquiryResource extends Resource
 
                         return $indicators;
                     }),
-
-
-                TrashedFilter::make()
-                    ->visible(auth()->user()->hasRole('super-admin')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -288,7 +296,7 @@ class InquiryResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         if (!auth()->user()->hasRole('super-admin')) {
-            return parent::getEloquentQuery()->where('is_admin', false);
+            return parent::getEloquentQuery()->where('deleted_at', null);
         }
 
         return parent::getEloquentQuery()

@@ -19,6 +19,11 @@ class ListInquiries extends ListRecords
         ];
     }
 
+    protected function getTableFiltersFormColumns(): int
+    {
+        return 2;
+    }
+
     protected function getTableRecordClassesUsing(): ?Closure
     {
         return fn (Model $record) => match ($record->deleted_at) {
