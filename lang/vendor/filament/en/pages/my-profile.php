@@ -21,5 +21,9 @@ return [
         'mobile-number' => [
             'label' => 'Mobile Number'
         ],
-    ]
+    ],
+
+    'navigation' => [
+        'label' => 'My Profile',
+    ],
 ];

@@ -6,7 +6,6 @@ use App\Filament\Resources\InquiryResource\Pages;
 use App\Filament\Resources\InquiryResource\RelationManagers;
 use App\Models\Inquiry;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -117,7 +116,7 @@ class InquiryResource extends Resource
                                             ->multiple()
                                             ->maxFiles(5)
                                             ->image()
-                                            ->maxSize(1024)
+                                            ->rules(['nullable', 'mimes:jpg,jpeg,png', 'max:1024'])
                                             ->hint('max-images : 5 (imgs) | max-image-size : 1 (mb)')
                                             ->hintIcon('heroicon-s-exclamation-circle'),
                                     ])

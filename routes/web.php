@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Livewire\Inquiry\Form;
+use App\Models\Inquiry;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', function () {
+Route::get('/', function () {
     return redirect()->route('filament.pages.dashboard');
+});
+
+Route::prefix('inquiry')->name('inquiry.')->group(function () {
+    Route::get('/form', Form::class)->name('form');
+
+    Route::middleware(['signed'])->group(function () {
+        Route::get('/{inquiry}/create-success', function (Inquiry $inquiry) {
+            return view('components.pages.create-success', compact('inquiry'));
+        })->name('create-success');
+    });
 });
