@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\UpdateNotificationBadgeCountEvent;
-use App\Listeners\UpdateNotificationBadgeCountListener;
-use App\Models\Inquiry;
-use App\Observers\InquiryObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,10 +17,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-
-        UpdateNotificationBadgeCountEvent::class => [
-            UpdateNotificationBadgeCountListener::class,
         ],
     ];
 
@@ -43,13 +35,4 @@ class EventServiceProvider extends ServiceProvider
     {
         return false;
     }
-
-    /**
-     * The model observers for your application.
-     *
-     * @var array
-     */
-    protected $observers = [
-        Inquiry::class => [InquiryObserver::class],
-    ];
 }
