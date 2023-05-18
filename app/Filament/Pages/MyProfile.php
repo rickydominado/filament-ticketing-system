@@ -64,7 +64,7 @@ class MyProfile extends BaseProfile
 
         $this->notify("success", __('filament-breezy::default.profile.personal_info.notify'));
 
-        return redirect()->route('filament.pages.my-profile');
+        $this->dispatchBrowserEvent('profile-update', ['profile' => $this->user->getProfilePhotoUrlAttribute()]);
     }
 
     protected static function getNavigationGroup(): ?string
