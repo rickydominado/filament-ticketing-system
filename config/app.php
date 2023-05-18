@@ -186,13 +186,15 @@ return [
          * Package Service Providers...
          */
         App\Providers\FilamentServiceProvider::class,
+        App\Providers\ExtendedFilamentServiceProvider::class,
+        App\Providers\ExtendedNotificationsServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
