@@ -26,12 +26,26 @@ class ListInquiries extends ListRecords
 
     protected function getTableRecordClassesUsing(): ?Closure
     {
-        return fn (Model $record) => match ($record->deleted_at) {
-            default => [
-                'border-l-4 border-yellow-600 bg-gray-100',
-                'dark:border-yellow-600 dark:bg-gray-300/10' => config('tables.dark_mode'),
-            ],
-            null => null
+        return function (Model $record) {
+            if ($record->deleted_at) {
+                return [
+                    'border-l-4 border-yellow-600 bg-gray-100',
+                    'dark:border-yellow-600 dark:bg-gray-300/10' => config('tables.dark_mode'),
+                ];
+            }
+
+            if (!$record->has_notification) {
+                return ['hidden'];
+            }
+
+            foreach (auth()->user()->unreadNotifications as $notification) {
+                if ($notification['data']['viewData']['inquiry_id'] === $record->id) {
+                    return [
+                        'border-l-4 border-cyan-600 bg-gray-100',
+                        'dark:border-cyan-600 dark:bg-gray-300/10' => config('tables.dark_mode'),
+                    ];
+                }
+            }
         };
     }
 }

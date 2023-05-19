@@ -24,6 +24,7 @@ class Inquiry extends Model implements HasMedia
         'category_id',
         'status',
         'severity',
+        'has_notification',
     ];
 
     protected $casts = [

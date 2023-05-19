@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('severity')->nullable()->default(Severity::Low->value);
             $table->unsignedBigInteger('assigned_to_user_id')->nullable();
             $table->foreign('assigned_to_user_id')->references('id')->on('users');
+            $table->boolean('has_notification')->default(false);
             $table->timestamps();
         });
     }
