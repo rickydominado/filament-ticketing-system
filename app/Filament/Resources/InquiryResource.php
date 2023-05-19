@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Events\UpdateNotificationBadgeCountEvent;
 use App\Filament\Resources\InquiryResource\Pages;
 use App\Filament\Resources\InquiryResource\RelationManagers;
 use App\Models\Inquiry;
@@ -25,8 +26,10 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Notifications\DatabaseNotification;
 use Livewire\TemporaryUploadedFile;
 
 class InquiryResource extends Resource
@@ -132,7 +135,7 @@ class InquiryResource extends Resource
                 Split::make([
                     TextColumn::make('id')
                         ->sortable()
-                        ->limit(8)
+                        ->limit(5)
                         ->tooltip(self::tooltip())
                         ->grow(false),
 
@@ -265,13 +268,25 @@ class InquiryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                \App\Filament\Tables\Actions\DeleteAction::make(),
+                \App\Filament\Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                \App\Filament\Tables\Actions\DeleteBulkAction::make(),
+                \App\Filament\Tables\Actions\ForceDeleteBulkAction::make()
+                    ->before(static function (Collection $records): void {
+                        $records->each(function (Model $record) {
+                            $notifications = DatabaseNotification::whereNull('read_at')->get();
+
+                            foreach ($notifications as $notification) {
+                                if ($notification['data']['viewData']['inquiry_id'] === $record->id) {
+                                    $notification->delete();
+                                    UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
+                                }
+                            }
+                        });
+                    }),
+                \App\Filament\Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
 
@@ -300,6 +315,16 @@ class InquiryResource extends Resource
 
         return parent::getEloquentQuery()
             ->withoutGlobalScopes(array(SoftDeletingScope::class));
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return DatabaseNotification::where('notifiable_id', auth()->user()->id)->whereNull('read_at')->count();
+    }
+
+    protected static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
     }
 
     public static function tooltip()

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Tables\Actions;
 
-use Filament\Tables\Actions\RestoreBulkAction as BaseComponent;
+use Filament\Tables\Actions\RestoreBulkAction as BaseAction;
 
-class RestoreBulkAction extends BaseComponent
+class RestoreBulkAction extends BaseAction
 {
     public function getSuccessNotificationTitle(): ?string
     {

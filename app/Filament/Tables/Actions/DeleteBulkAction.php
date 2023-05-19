@@ -46,14 +46,13 @@ class DeleteBulkAction extends BulkAction
                     foreach ($notifications as $notification) {
                         if ($notification['data']['viewData']['inquiry_id'] === $record->id) {
                             $notification->delete();
+                            UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
                         }
                     }
 
                     $record->delete();
                 });
             });
-
-            UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
 
             $this->success();
         });
