@@ -61,10 +61,20 @@ class UserPolicy
         return $user->hasRole('super-admin');
     }
 
+    public function restoreAny(User $user): bool
+    {
+        return $user->hasRole('super-admin');
+    }
+
     /**
      * Determine whether the user can permanently delete the model.
      */
     public function forceDelete(User $user, User $model): bool
+    {
+        return $user->hasRole('super-admin');
+    }
+
+    public function forceDeleteAny(User $user): bool
     {
         return $user->hasRole('super-admin');
     }
