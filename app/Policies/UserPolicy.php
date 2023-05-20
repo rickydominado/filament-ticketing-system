@@ -12,7 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -21,8 +21,10 @@ class UserPolicy
     public function view(User $user, User $model): bool
     {
         if ($model->roles()->first()->name === 'agent') {
-            return $user->hasRole('admin');
+            return $user->hasAnyRole(['super-admin', 'admin']);
         }
+
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -30,7 +32,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -39,8 +41,10 @@ class UserPolicy
     public function update(User $user, User $model): bool
     {
         if ($model->roles()->first()->name === 'agent') {
-            return $user->hasRole('admin');
+            return $user->hasAnyRole(['super-admin', 'admin']);
         }
+
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -49,8 +53,10 @@ class UserPolicy
     public function delete(User $user, User $model): bool
     {
         if ($model->roles()->first()->name === 'agent') {
-            return $user->hasRole('admin');
+            return $user->hasAnyRole(['super-admin', 'admin']);
         }
+
+        return $user->hasRole('super-admin');
     }
 
     /**

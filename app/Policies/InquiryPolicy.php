@@ -13,7 +13,7 @@ class InquiryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -21,7 +21,7 @@ class InquiryPolicy
      */
     public function view(User $user, Inquiry $inquiry): bool
     {
-        if ($user->hasRole('admin') || $user->id === $inquiry->assigned_to_user_id) {
+        if ($user->hasAnyRole(['super-admin', 'admin']) || $user->id === $inquiry->assigned_to_user_id) {
             return true;
         }
     }
@@ -31,7 +31,7 @@ class InquiryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return false;
     }
 
     /**
@@ -39,7 +39,7 @@ class InquiryPolicy
      */
     public function update(User $user, Inquiry $inquiry): bool
     {
-        if ($user->hasRole('admin') || $user->id === $inquiry->assigned_to_user_id) {
+        if ($user->hasAnyRole(['super-admin', 'admin']) || $user->id === $inquiry->assigned_to_user_id) {
             return true;
         }
     }
@@ -49,7 +49,7 @@ class InquiryPolicy
      */
     public function delete(User $user, Inquiry $inquiry): bool
     {
-        if ($user->hasRole('admin') || $user->id === $inquiry->assigned_to_user_id) {
+        if ($user->hasAnyRole(['super-admin', 'admin']) || $user->id === $inquiry->assigned_to_user_id) {
             return true;
         }
     }
