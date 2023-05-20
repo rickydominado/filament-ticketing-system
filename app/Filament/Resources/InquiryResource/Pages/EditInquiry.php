@@ -6,6 +6,7 @@ use App\Events\UpdateNotificationBadgeCountEvent;
 use App\Filament\Resources\InquiryResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Notifications\DatabaseNotification;
 
 class EditInquiry extends EditRecord
 {
@@ -15,13 +16,17 @@ class EditInquiry extends EditRecord
     {
         parent::mount($record);
 
-        foreach (auth()->user()->unreadNotifications as $notification) {
-            if ($notification['data']['viewData']['inquiry_id'] === $record) {
-                $notification->markAsRead();
-            }
-        }
+        $unreadNotification = DatabaseNotification::where('data->viewData->inquiry_id', $record)
+            ->where('notifiable_id', auth()->user()->id)
+            ->get();
 
-        UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
+        $unreadNotification->markAsRead();
+
+        $notifications = DatabaseNotification::where('notifiable_id', auth()->user()->id)
+            ->whereNull('read_at')
+            ->count();
+
+        event(new UpdateNotificationBadgeCountEvent(auth()->user(), $notifications));
     }
 
     protected function getActions(): array

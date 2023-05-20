@@ -22,6 +22,6 @@ class UpdateNotificationBadgeCountListener
      */
     public function handle(UpdateNotificationBadgeCountEvent $event): void
     {
-        event(new DatabaseNotificationsSent(auth()->user()));
+        event(new DatabaseNotificationsSent($event->user));
     }
 }

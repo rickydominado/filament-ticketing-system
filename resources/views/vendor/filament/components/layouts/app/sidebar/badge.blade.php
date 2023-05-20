@@ -12,11 +12,11 @@
             window.addEventListener('EchoLoaded', () => {
                 window.Echo.private(`App.Models.User.${userId}`)
                     .listen('.notification-badge-count.sent', (e) => {
-                        setTimeout(() => notification = e.notification || null, 500)
+                        setTimeout(() => notification = e.notifications || null, 500)
                     })
             })"
 
-        @receive-notification.window="setTimeout(() => notification = $event.detail.notification || null, 500)"
+        @receive-notification.window="setTimeout(() => notification = $event.detail.notifications || null, 500)"
 
         x-show="$store.sidebar.isOpen"
     @endif

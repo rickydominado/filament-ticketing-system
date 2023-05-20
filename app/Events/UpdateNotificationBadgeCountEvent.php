@@ -18,15 +18,15 @@ class UpdateNotificationBadgeCountEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Model | Authenticatable $user;
-    public int $notification;
+    public int $notifications;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Model|Authenticatable $user)
+    public function __construct(Model|Authenticatable $user, int $notifications)
     {
         $this->user = $user;
-        $this->notification = DatabaseNotification::where('notifiable_id', auth()->user()->id)->whereNull('read_at')->count();
+        $this->notifications = $notifications;
     }
 
     public function broadcastOn(): string
