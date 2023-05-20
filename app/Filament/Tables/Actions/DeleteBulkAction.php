@@ -40,18 +40,19 @@ class DeleteBulkAction extends BulkAction
 
         $this->action(function (): void {
             $this->process(static function (Collection $records) {
-                $records->each(function (Model $record) {
-                    $notifications = DatabaseNotification::whereNull('read_at')->get();
+                $unreadNotifications = DatabaseNotification::whereIn('data->viewData->inquiry_id', $records->pluck('id')->toArray())->get();
 
-                    foreach ($notifications as $notification) {
-                        if ($notification['data']['viewData']['inquiry_id'] === $record->id) {
-                            $notification->delete();
-                            UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
-                        }
-                    }
+                foreach ($unreadNotifications as $unreadNotification) {
+                    $unreadNotification->delete();
+                }
 
-                    $record->delete();
-                });
+                $notifications = DatabaseNotification::where('notifiable_id', auth()->user()->id)
+                    ->whereNull('read_at')
+                    ->count();
+
+                event(new UpdateNotificationBadgeCountEvent(auth()->user(), $notifications));
+
+                $records->each(fn (Model $record) => $record->delete());
             });
 
             $this->success();

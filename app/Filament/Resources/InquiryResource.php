@@ -275,16 +275,17 @@ class InquiryResource extends Resource
                 \App\Filament\Tables\Actions\DeleteBulkAction::make(),
                 \App\Filament\Tables\Actions\ForceDeleteBulkAction::make()
                     ->before(static function (Collection $records): void {
-                        $records->each(function (Model $record) {
-                            $notifications = DatabaseNotification::whereNull('read_at')->get();
+                        $unreadNotifications = DatabaseNotification::whereIn('data->viewData->inquiry_id', $records->pluck('id')->toArray())->get();
 
-                            foreach ($notifications as $notification) {
-                                if ($notification['data']['viewData']['inquiry_id'] === $record->id) {
-                                    $notification->delete();
-                                    UpdateNotificationBadgeCountEvent::dispatch(auth()->user());
-                                }
-                            }
-                        });
+                        foreach ($unreadNotifications as $unreadNotification) {
+                            $unreadNotification->delete();
+                        }
+
+                        $notifications = DatabaseNotification::where('notifiable_id', auth()->user()->id)
+                            ->whereNull('read_at')
+                            ->count();
+
+                        event(new UpdateNotificationBadgeCountEvent(auth()->user(), $notifications));
                     }),
                 \App\Filament\Tables\Actions\RestoreBulkAction::make(),
             ]);
