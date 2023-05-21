@@ -157,29 +157,21 @@ class UserResource extends Resource
                         ->falseColor('primary')
                         ->grow(false),
 
-                    TextColumn::make('firstname')
+                    TextColumn::make('fullname')
                         ->searchable()
-                        ->limit(10)
-                        ->tooltip(self::tooltip())
-                        ->grow(false),
-
-                    TextColumn::make('lastname')
-                        ->searchable()
-                        ->limit(10)
+                        ->limit(25)
                         ->tooltip(self::tooltip()),
 
                     Stack::make([
                         TextColumn::make('address')
                             ->searchable()
-                            ->limit(25)
+                            ->limit(30)
                             ->tooltip(self::tooltip())
-                            ->weight('bold')
-                            ->alignment('right'),
+                            ->weight('bold'),
 
                         TextColumn::make('mobile_number')
                             ->formatStateUsing(fn (?string $state): ?string => preg_replace('/^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$/', '+$1($2)$3-$4-$5', $state))
-                            ->searchable()
-                            ->alignment('right')
+                            ->searchable(),
                     ]),
 
                     Stack::make([
@@ -187,14 +179,12 @@ class UserResource extends Resource
                             ->searchable()
                             ->limit(25)
                             ->tooltip(self::tooltip())
-                            ->weight('bold')
-                            ->alignment('center'),
+                            ->weight('bold'),
 
                         TextColumn::make('email')
                             ->searchable()
-                            ->limit(20)
-                            ->tooltip(self::tooltip())
-                            ->alignment('center'),
+                            ->limit(25)
+                            ->tooltip(self::tooltip()),
                     ]),
 
                     Stack::make([

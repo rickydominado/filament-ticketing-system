@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Events\UpdateNotificationBadgeCountEvent;
 use App\Filament\Resources\InquiryResource\Pages;
+use App\Filament\Resources\InquiryResource\Pages\EditInquiry;
 use App\Filament\Resources\InquiryResource\RelationManagers;
 use App\Models\Inquiry;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -15,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Pages\Page;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -52,18 +55,18 @@ class InquiryResource extends Resource
                                     ->autofocus()
                                     ->placeholder('Your Name')
                                     ->disableAutocomplete()
-                                    ->required()
                                     ->minLength(8)
-                                    ->maxLength(50),
+                                    ->maxLength(50)
+                                    ->disabled(fn (Page $livewire) => $livewire instanceof EditInquiry),
 
                                 TextInput::make('email')
                                     ->autofocus()
                                     ->placeholder('Your Email')
                                     ->disableAutocomplete()
-                                    ->required()
                                     ->email()
                                     ->minLength(8)
-                                    ->maxLength(50),
+                                    ->maxLength(50)
+                                    ->disabled(fn (Page $livewire) => $livewire instanceof EditInquiry),
                             ]),
 
                         Fieldset::make('Inquiry Information')
@@ -72,37 +75,18 @@ class InquiryResource extends Resource
                                     ->autofocus()
                                     ->placeholder('Inquiry Title')
                                     ->disableAutocomplete()
-                                    ->required()
                                     ->minLength(8)
-                                    ->maxLength(50),
-
-                                Grid::make(3)
-                                    ->schema([
-                                        Select::make('category_id')
-                                            ->autofocus()
-                                            ->placeholder('Select a category')
-                                            ->relationship('category', 'name')
-                                            ->required(),
-                                    ]),
-
-                                Select::make('status')
-                                    ->options(\App\Enums\Inquiry\Status::statuses())
-                                    ->autofocus()
-                                    ->default(1)
-                                    ->disablePlaceholderSelection(),
-
-                                Select::make('severity')
-                                    ->options(\App\Enums\Inquiry\Severity::severities())
-                                    ->autofocus()
-                                    ->default(1)
-                                    ->disablePlaceholderSelection(),
+                                    ->maxLength(50)
+                                    ->columnSpan(2)
+                                    ->disabled(fn (Page $livewire) => $livewire instanceof EditInquiry),
 
                                 Textarea::make('content')
                                     ->autofocus()
                                     ->placeholder('Inquiry Content...')
-                                    ->required()
                                     ->minLength(10)
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->columnSpan(2)
+                                    ->disabled(fn (Page $livewire) => $livewire instanceof EditInquiry),
 
                                 Grid::make(2)
                                     ->schema([
@@ -114,16 +98,49 @@ class InquiryResource extends Resource
                                             ->autofocus()
                                             ->disk('media')
                                             ->enableOpen()
-                                            ->imagePreviewHeight('80')
+                                            ->imagePreviewHeight('50')
                                             ->removeUploadedFileButtonPosition('right')
                                             ->multiple()
                                             ->maxFiles(5)
                                             ->image()
                                             ->rules(['nullable', 'mimes:jpg,jpeg,png', 'max:1024'])
                                             ->hint('max-images : 5 (imgs) | max-image-size : 1 (mb)')
-                                            ->hintIcon('heroicon-s-exclamation-circle'),
-                                    ])
+                                            ->hintIcon('heroicon-s-exclamation-circle')
+                                            ->disabled(fn (Page $livewire) => $livewire instanceof EditInquiry),
+                                    ]),
+
+                                Grid::make(4)
+                                    ->schema([
+                                        Select::make('status')
+                                            ->options(\App\Enums\Inquiry\Status::statuses())
+                                            ->autofocus()
+                                            ->default(1)
+                                            ->disablePlaceholderSelection(),
+
+                                        Select::make('severity')
+                                            ->options(\App\Enums\Inquiry\Severity::severities())
+                                            ->autofocus()
+                                            ->default(1)
+                                            ->disablePlaceholderSelection(),
+                                    ]),
+
+                                Select::make('category_id')
+                                    ->autofocus()
+                                    ->placeholder('Select a category')
+                                    ->relationship('category', 'name'),
+
+                                Grid::make(2)
+                                    ->schema([
+                                        Select::make('assigned_to_user_id')
+                                            ->label('Assigned to Agent')
+                                            ->autofocus()
+                                            ->placeholder('Select an agent')
+                                            ->options(User::where('is_admin', false)->pluck('fullname', 'id'))
+                                            ->required(fn (Page $livewire) => $livewire instanceof EditInquiry)
+                                            ->visible(auth()->user()->is_admin),
+                                    ]),
                             ])
+                            ->columns(3)
                     ]),
             ]);
     }
@@ -135,7 +152,7 @@ class InquiryResource extends Resource
                 Split::make([
                     TextColumn::make('id')
                         ->sortable()
-                        ->limit(5)
+                        ->limit(8)
                         ->tooltip(self::tooltip())
                         ->grow(false),
 
@@ -159,17 +176,14 @@ class InquiryResource extends Resource
                             ->searchable()
                             ->limit(15)
                             ->tooltip(self::tooltip())
-                            ->weight('bold')
-                            ->alignment('right'),
+                            ->weight('bold'),
 
                         TextColumn::make('content')
                             ->limit(15)
-                            ->tooltip(self::tooltip())
-                            ->alignment('right'),
+                            ->tooltip(self::tooltip()),
                     ]),
 
-                    TextColumn::make('category.name')
-                        ->alignment('center'),
+                    TextColumn::make('category.name'),
 
                     TextColumn::make('medias_count')
                         ->label('Attachment(s)')
@@ -303,7 +317,7 @@ class InquiryResource extends Resource
         return [
             'index' => Pages\ListInquiries::route('/'),
             'create' => Pages\CreateInquiry::route('/create'),
-            // 'view' => Pages\ViewInquiry::route('/{record}'),
+            'view' => Pages\ViewInquiry::route('/{record}'),
             'edit' => Pages\EditInquiry::route('/{record}/edit'),
         ];
     }

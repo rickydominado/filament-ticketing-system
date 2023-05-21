@@ -24,6 +24,11 @@ class ListInquiries extends ListRecords
         return 2;
     }
 
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn (Model $record): string => route('filament.resources.inquiries.view', ['record' => $record]);
+    }
+
     protected function getTableRecordClassesUsing(): ?Closure
     {
         return function (Model $record) {

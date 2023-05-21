@@ -103,7 +103,7 @@ class Form extends Component implements HasForms
                                 ->autofocus()
                                 ->disk('media')
                                 ->enableOpen()
-                                ->imagePreviewHeight('80')
+                                ->imagePreviewHeight('50')
                                 ->removeUploadedFileButtonPosition('right')
                                 ->multiple()
                                 ->maxFiles(5)

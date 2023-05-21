@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn('name', 'firstname');
-            $table->string('lastname')->after('name');
+            $table->dropColumn('name');
+            $table->after('id', function ($table) {
+                $table->string('firstname');
+                $table->string('lastname');
+                $table->string('fullname')->virtualAs('concat(firstname, \' \', lastname)');
+            });
             $table->string('email')->nullable()->change();
             $table->after('email', function ($table) {
                 $table->string('username');
